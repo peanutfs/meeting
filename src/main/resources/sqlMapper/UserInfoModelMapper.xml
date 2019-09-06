@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peanut.fs.dao.mapper.user.UserInfoModelMapper" >
+    <resultMap id="BaseResultMap" type="com.peanut.fs.dao.model.user.UserInfoModel" >
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="MEETING_ID" property="meetingId" jdbcType="BIGINT" />
+        <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+        <result column="SEX" property="sex" jdbcType="VARCHAR" />
+        <result column="AGE" property="age" jdbcType="INTEGER" />
+        <result column="PHONE_NO" property="phoneNo" jdbcType="VARCHAR" />
+        <result column="ARRIVE_TIME" property="arriveTime" jdbcType="TIMESTAMP" />
+        <result column="LEAVE_TIME" property="leaveTime" jdbcType="TIMESTAMP" />
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+        <result column="COMPANY_ADDRESS" property="companyAddress" jdbcType="VARCHAR" />
+        <result column="TRANSPORT" property="transport" jdbcType="VARCHAR" />
+        <result column="ROOM_NO" property="roomNo" jdbcType="VARCHAR" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="IS_CHECK_IN" property="isCheckIn" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, MEETING_ID, USERNAME, SEX, AGE, PHONE_NO, ARRIVE_TIME, LEAVE_TIME, COMPANY_NAME, COMPANY_ADDRESS, TRANSPORT,
+        ROOM_NO, CREATE_TIME, UPDATE_TIME, IS_CHECK_IN
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM USER_INFO
+        WHERE ID = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByMeetingId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM USER_INFO
+        WHERE MEETING_ID = #{meetingId,jdbcType=BIGINT}
+    </select>
+
+    <insert id="insert" parameterType="com.peanut.fs.dao.model.user.UserInfoModel" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="ID">
+        insert into USER_INFO (ID, MEETING_ID, USERNAME, SEX, AGE, PHONE_NO, ARRIVE_TIME, LEAVE_TIME, COMPANY_NAME,
+                                COMPANY_ADDRESS, TRANSPORT, ROOM_NO, CREATE_TIME, UPDATE_TIME, IS_CHECK_IN)
+        values (#{id,jdbcType=BIGINT}, #{meetingId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR},
+                  #{age, jdbcType=INTEGER}, #{phoneNo, jdbcType=VARCHAR}, #{arriveTime, jdbcType=TIMESTAMP},
+                  #{leaveTime, jdbcType=TIMESTAMP}, #{companyName, jdbcType=VARCHAR}, #{companyAddress, jdbcType=VARCHAR},
+                  #{transport, jdbcType=VARCHAR}, #{roomNo, jdbcType=VARCHAR}, #{createTime, jdbcType=TIMESTAMP},
+                  #{updateTime, jdbcType=TIMESTAMP}, #{isCheckIn, jdbcType=VARCHAR})
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM USER_INFO WHERE ID = #{id,jdbcType=BIGINT}
+    </delete>
+
+</mapper>

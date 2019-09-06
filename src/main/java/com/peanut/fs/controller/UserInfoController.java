@@ -18,6 +18,6 @@ public class UserInfoController {
 
     @RequestMapping("/all")
     public String helloUser(Model model) {
-        return "/hello.ftl";
+        return "/hello";
     }
 }

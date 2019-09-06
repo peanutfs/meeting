@@ -9,7 +9,7 @@
     <mvc:annotation-driven />
 
     <!-- 扫描路径 -->
-    <context:component-scan base-package="com.peanut.fs" />
+    <context:component-scan base-package="com.peanut.fs.*" />
 
     <!-- xml escape -->
     <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape"/>
@@ -52,7 +52,7 @@
         <property name="prefix" value=""/>
         <property name="suffix" value=""/>
         <property name="order" value="1"/>
-        <property name="viewNames" value="*.ftl"/>
+        <property name="viewNames" value=".ftl"/>
         <property name="requestContextAttribute" value="rc"/>
         <property name="contentType" value="text/html; charset=utf-8"/>
         <property name="cache" value="true"/>
