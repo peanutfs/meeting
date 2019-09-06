@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peanut.fs.dao.mapper.meeting.MeetingInfoModelMapper" >
+    <resultMap id="BaseResultMap" type="com.peanut.fs.dao.model.meeting.MeetingInfoModel" >
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="MEETING_TITLE" property="meetingTitle" jdbcType="VARCHAR" />
+        <result column="START_TIME" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="CHECK_IN_LOCATION" property="checkInLocation" jdbcType="VARCHAR" />
+        <result column="CHECK_IN_RANGE" property="checkInRange" jdbcType="VARCHAR" />
+        <result column="IS_NEED_REGISTER" property="isNeedRegister" jdbcType="VARCHAR" />
+        <result column="ORGANIZER" property="organizer" jdbcType="VARCHAR" />
+        <result column="CHECK_IN_RULE" property="checkInRule" jdbcType="VARCHAR" />
+        <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+        <result column="THEME_IMAGE_URL" property="themeImageUrl" jdbcType="VARCHAR" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="MEETING_USER_MAP" type="com.peanut.fs.dao.model.meeting.MeetingInfoModel" >
+        <id column="MI_ID" property="id" jdbcType="BIGINT" />
+        <result column="MI_MEETING_TITLE" property="meetingTitle" jdbcType="VARCHAR" />
+        <result column="MI_START_TIME" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="MI_END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="MI_CHECK_IN_LOCATION" property="checkInLocation" jdbcType="VARCHAR" />
+        <result column="MI_CHECK_IN_RANGE" property="checkInRange" jdbcType="VARCHAR" />
+        <result column="MI_IS_NEED_REGISTER" property="isNeedRegister" jdbcType="VARCHAR" />
+        <result column="MI_ORGANIZER" property="organizer" jdbcType="VARCHAR" />
+        <result column="MI_CHECK_IN_RULE" property="checkInRule" jdbcType="VARCHAR" />
+        <result column="MI_REMARK" property="remark" jdbcType="VARCHAR" />
+        <result column="MI_THEME_IMAGE_URL" property="themeImageUrl" jdbcType="VARCHAR" />
+        <result column="MI_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <collection property="userInfoModelList"  ofType="com.peanut.fs.dao.model.user.UserInfoModel">
+            <id column="UI_ID" property="id" jdbcType="BIGINT" />
+            <result column="UI_MEETING_ID" property="meetingId" jdbcType="BIGINT" />
+            <result column="UI_USERNAME" property="username" jdbcType="VARCHAR" />
+            <result column="UI_SEX" property="sex" jdbcType="VARCHAR" />
+            <result column="UI_AGE" property="age" jdbcType="INTEGER" />
+            <result column="UI_PHONE_NO" property="phoneNo" jdbcType="VARCHAR" />
+            <result column="UI_ARRIVE_TIME" property="arriveTime" jdbcType="TIMESTAMP" />
+            <result column="UI_LEAVE_TIME" property="leaveTime" jdbcType="TIMESTAMP" />
+            <result column="UI_COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+            <result column="UI_COMPANY_ADDRESS" property="companyAddress" jdbcType="VARCHAR" />
+            <result column="UI_TRANSPORT" property="transport" jdbcType="VARCHAR" />
+            <result column="UI_ROOM_NO" property="roomNo" jdbcType="VARCHAR" />
+            <result column="UI_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+            <result column="UI_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+            <result column="UI_IS_CHECK_IN" property="isCheckIn" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, IS_NEED_REGISTER, ORGANIZER, 
+        CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME
+    </sql>
+
+    <sql id="Meeting_User_Column_List" >
+        mi.ID AS MI_ID, mi.MEETING_TITLE AS MI_MEETING_TITLE, mi.START_TIME AS MI_START_TIME, mi.END_TIME AS MI_END_TIME,
+        mi.CHECK_IN_LOCATION AS MI_CHECK_IN_LOCATION, mi.CHECK_IN_RANGE AS MI_CHECK_IN_RANGE, mi.IS_NEED_REGISTER AS MI_IS_NEED_REGISTER,
+        mi.ORGANIZER AS MI_ORGANIZER, mi.CHECK_IN_RULE AS MI_CHECK_IN_RULE, mi.REMARK AS MI_REMARK, mi.THEME_IMAGE_URL AS MI_THEME_IMAGE_URL,
+        mi.CREATE_TIME AS MI_CREATE_TIME,
+        ui.ID AS UI_ID, ui.MEETING_ID AS UI_MEETING_ID, ui.USERNAME AS UI_USERNAME, ui.SEX AS UI_SEX, ui.AGE AS UI_AGE,
+        ui.PHONE_NO AS UI_PHONE_NO, ui.ARRIVE_TIME AS UI_ARRIVE_TIME, ui.LEAVE_TIME AS UI_LEAVE_TIME, ui.COMPANY_NAME AS UI_COMPANY_NAME,
+        ui.COMPANY_ADDRESS AS UI_COMPANY_ADDRESS, ui.TRANSPORT AS UI_TRANSPORT,
+        ui.ROOM_NO AS UI_ROOM_NO, ui.CREATE_TIME AS UI_CREATE_TIME, ui.UPDATE_TIME AS UI_UPDATE_TIME, ui.IS_CHECK_IN AS UI_IS_CHECK_IN
+    </sql>
+
+    <select id="selectByPageWithCheckIn" resultMap="MEETING_USER_MAP" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Meeting_User_Column_List"/>
+        FROM
+        MEETING_INFO mi
+        LEFT JOIN
+        USER_INFO ui
+        ON mi.ID = ui.MEETING_ID
+        AND ui.IS_CHECK_IN = 1
+        WHERE 1=1
+        ORDER BY mi.CREATE_TIME DESC
+    </select>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM MEETING_INFO
+        WHERE ID = #{id, jdbcType=BIGINT}
+    </select>
+
+    <insert id="insert" parameterType="com.peanut.fs.dao.model.meeting.MeetingInfoModel" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="ID">
+        insert into MEETING_INFO (ID, MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, IS_NEED_REGISTER, ORGANIZER,
+                                    CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME)
+        values (#{id,jdbcType=BIGINT}, #{meetingTitle,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+        #{checkInLocation, jdbcType=VARCHAR}, #{checkInRange, jdbcType=VARCHAR}, #{isNeedRegister, jdbcType=VARCHAR},
+        #{organizer, jdbcType=VARCHAR}, #{checkInRule, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR},
+        #{themeImageUrl, jdbcType=VARCHAR}, #{createTime, jdbcType=TIMESTAMP})
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM MEETING_INFO WHERE ID = #{id,jdbcType=BIGINT}
+    </delete>
+
+</mapper>
