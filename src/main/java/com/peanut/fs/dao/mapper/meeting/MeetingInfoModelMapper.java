@@ -1,5 +1,6 @@
 package com.peanut.fs.dao.mapper.meeting;
 
+import com.peanut.fs.dao.command.MeetingInfoCommand;
 import com.peanut.fs.dao.model.meeting.MeetingInfoModel;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface MeetingInfoModelMapper {
      * 分页查询会议列表
      * @return
      */
-    List<MeetingInfoModel> selectByPageWithCheckIn();
+    List<MeetingInfoModel> selectByPageWithCheckIn(MeetingInfoCommand meetingInfoCommand);
 
     /**
      * 根据逐渐查询

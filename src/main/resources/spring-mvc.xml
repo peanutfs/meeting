@@ -58,4 +58,6 @@
         <property name="cache" value="true"/>
         <property name="exposeSessionAttributes" value="true"/>
     </bean>
+
+    <mvc:resources mapping="/js/**" location="/resources/js/"/>
 </beans>

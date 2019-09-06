@@ -77,7 +77,7 @@
         ORDER BY mi.CREATE_TIME DESC
     </select>
     
-    <select id="selectById" resultMap="BaseResultMap">
+    <select id="selectById" resultMap="BaseResultMap" parameterType="com.peanut.fs.dao.command.MeetingInfoCommand">
         SELECT
         <include refid="Base_Column_List"/>
         FROM MEETING_INFO

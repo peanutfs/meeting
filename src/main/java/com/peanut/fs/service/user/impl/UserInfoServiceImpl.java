@@ -1,5 +1,7 @@
 package com.peanut.fs.service.user.impl;
 
+import com.peanut.fs.common.result.CommonResult;
+import com.peanut.fs.common.util.ValidateUtil;
 import com.peanut.fs.dao.mapper.user.UserInfoModelMapper;
 import com.peanut.fs.dao.model.user.UserInfoModel;
 import com.peanut.fs.service.user.UserInfoService;
@@ -73,9 +75,14 @@ public class UserInfoServiceImpl implements UserInfoService{
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(UserInfoDto userInfoDto) {
+    public CommonResult insert(UserInfoDto userInfoDto) {
         log.info("[UserInfoServiceImpl.insert]新增用户信息开始userInfoDto:{}", userInfoDto);
-        return userInfoModelMapper.insert(buildUserInfoModel(userInfoDto));
+        CommonResult commonResult = new CommonResult();
+        if(!ValidateUtil.isOperationSuccess(userInfoModelMapper.insert(buildUserInfoModel(userInfoDto)))){
+            log.error("[UserInfoServiceImpl.insert]新增用户失败");
+            commonResult.setSuccess(CommonResult.failureCode);
+        }
+        return commonResult;
     }
 
     private UserInfoModel buildUserInfoModel(UserInfoDto userInfoDto) {
@@ -98,8 +105,13 @@ public class UserInfoServiceImpl implements UserInfoService{
     }
 
     @Override
-    public int delete(long userId) {
+    public CommonResult delete(long userId) {
         log.info("[UserInfoServiceImpl.delete]删除用户信息开始userId:{}", userId);
-        return userInfoModelMapper.delete(userId);
+        CommonResult commonResult = new CommonResult();
+        if(!ValidateUtil.isOperationSuccess(userInfoModelMapper.delete(userId))){
+            log.error("[UserInfoServiceImpl.delete]删除用户信息失败");
+            commonResult.setSuccess(CommonResult.failureCode);
+        }
+        return commonResult;
     }
 }

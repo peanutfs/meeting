@@ -1,5 +1,6 @@
 package com.peanut.fs.service.user;
 
+import com.peanut.fs.common.result.CommonResult;
 import com.peanut.fs.service.user.dto.UserInfoDto;
 
 import java.util.List;
@@ -30,12 +31,12 @@ public interface UserInfoService {
      * @param userInfoDto
      * @return
      */
-    int insert(UserInfoDto userInfoDto);
+    CommonResult insert(UserInfoDto userInfoDto);
 
     /**
      * 删除用户信息
      * @param userId
      * @return
      */
-    int delete(long userId);
+    CommonResult delete(long userId);
 }
