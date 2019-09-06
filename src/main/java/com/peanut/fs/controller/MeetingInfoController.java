@@ -5,6 +5,7 @@ import com.peanut.fs.service.meeting.MeetingInfoService;
 import com.peanut.fs.service.meeting.dto.MeetingInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,5 +24,10 @@ public class MeetingInfoController {
         CommonResult commonResult = meetingInfoService.insert(meetingInfoDto);
         log.info("[MeetingInfoController.addMeeting]新增会议结束commonResult:{}", commonResult);
         return commonResult;
+    }
+
+    @RequestMapping("/addMeetingForm")
+    public String helloUser(Model model) {
+        return "/meeting-add.ftl";
     }
 }
