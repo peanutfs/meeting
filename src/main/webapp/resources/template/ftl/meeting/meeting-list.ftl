@@ -60,7 +60,7 @@
                 , {field: 'organizer', title: '主办单位'}
                 , {field: 'checkInCount', title: '签到人数', width: 100}
                 , {field:'isEffective', title:'是否生效', width:100, templet: '#isEffectiveTpl', unresize: true}
-                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#barOption'}
+                , {fixed: 'right',title: '操作', align: 'center', toolbar: '#barOption', width:400}
             ]]
             , id: 'versionInfo'
             , url: '${base}/meeting/meetingInfo'
