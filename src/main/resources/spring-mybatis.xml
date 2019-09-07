@@ -19,7 +19,7 @@
                 <bean class="com.github.pagehelper.PageHelper">
                     <property name="properties">
                         <value>
-                            dialect=oracle
+                            dialect=mysql
                             reasonable=true
                             offsetAsPageNum=true
                             rowBoundsWithCount=true
@@ -36,6 +36,8 @@
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
         <!-- 默认情况下会自动注入id=sqlSessionFactory的bean，也可以按上述方式指定sqlSessionFactory -->
     </bean>
+
+    <mybatis:scan base-package="com.peanut.fs.dao.mapper" />
 
 </beans>
 

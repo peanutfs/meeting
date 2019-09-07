@@ -17,15 +17,38 @@
 
     <!-- 引入jdbc配置文件 -->
     <context:property-placeholder location="classpath:jdbc.properties" />
-
+    <!--指定spring注入层 -->
+    <context:component-scan base-package="com.peanut.fs" />
     <!--创建jdbc数据源 -->
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="${driver}" />
-        <property name="url" value="${url}" />
-        <property name="username" value="${username}" />
-        <property name="password" value="${password}" />
-    </bean>
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+    <property name="driverClassName" value="${jdbc.driver}" />
+    <property name="url" value="${jdbc.url}" />
+    <property name="username" value="${jdbc.username}" />
+    <property name="password" value="${jdbc.password}" />
 
+    <property name="filters" value="stat" />
+
+    <property name="maxActive" value="20" />
+    <property name="initialSize" value="1" />
+    <property name="maxWait" value="60000" />
+    <property name="minIdle" value="1" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="minEvictableIdleTimeMillis" value="300000" />
+    <property name="validationQuery" value="SELECT 'x'" />
+    <property name="testWhileIdle" value="true" />
+    <property name="testOnBorrow" value="false" />
+    <property name="testOnReturn" value="false" />
+    <property name="poolPreparedStatements" value="true" />
+    <property name="maxPoolPreparedStatementPerConnectionSize" value="50" />
+</bean>
+
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+        <property name="maxRows" value="50000"></property>
+        <property name="fetchSize" value="100"></property>
+    </bean>
     <!-- 创建SqlSessionFactory，同时指定数据源 -->
     <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
         <!--<property name="dataSource" ref="dataSource" />-->
@@ -46,4 +69,5 @@
         <!--&lt;!&ndash; 默认情况下会自动注入id=sqlSessionFactory的bean，也可以按上述方式指定sqlSessionFactory &ndash;&gt;-->
     <!--</bean>-->
 
+    <import resource="classpath:spring-mybatis.xml"/>
 </beans>

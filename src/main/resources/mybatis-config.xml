@@ -8,13 +8,13 @@
         <setting name="lazyLoadingEnabled" value="true"/>
         <setting name="multipleResultSetsEnabled" value="false"/>
         <setting name="useColumnLabel" value="true"/>
-        <setting name="useGeneratedKeys" value="false"/>
+        <setting name="useGeneratedKeys" value="true"/>
 
         <setting name="defaultExecutorType" value="SIMPLE"/>
         <setting name="defaultStatementTimeout" value="25000"/>
         <!-- 避免local session cache造成在同一个事务中多次select不会去实际查数据库的问题 -->
         <setting name="localCacheScope" value="STATEMENT"/>
-        <!--<setting name="logImpl" value="STDOUT_LOGGING" />-->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
     </settings>
 
 </configuration>

@@ -14,6 +14,8 @@
         <result column="REMARK" property="remark" jdbcType="VARCHAR" />
         <result column="THEME_IMAGE_URL" property="themeImageUrl" jdbcType="VARCHAR" />
         <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="IS_EFFECTIVE" property="isEffective" jdbcType="VARCHAR" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
     <resultMap id="MEETING_USER_MAP" type="com.peanut.fs.dao.model.meeting.MeetingInfoModel" >
@@ -29,6 +31,8 @@
         <result column="MI_REMARK" property="remark" jdbcType="VARCHAR" />
         <result column="MI_THEME_IMAGE_URL" property="themeImageUrl" jdbcType="VARCHAR" />
         <result column="MI_CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="MI_IS_EFFECTIVE" property="isEffective" jdbcType="VARCHAR" />
+        <result column="MI_UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
         <collection property="userInfoModelList"  ofType="com.peanut.fs.dao.model.user.UserInfoModel">
             <id column="UI_ID" property="id" jdbcType="BIGINT" />
             <result column="UI_MEETING_ID" property="meetingId" jdbcType="BIGINT" />
@@ -50,21 +54,21 @@
 
     <sql id="Base_Column_List" >
         ID, MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, IS_NEED_REGISTER, ORGANIZER, 
-        CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME
+        CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME, IS_EFFECTIVE, UPDATE_TIME
     </sql>
 
     <sql id="Meeting_User_Column_List" >
         mi.ID AS MI_ID, mi.MEETING_TITLE AS MI_MEETING_TITLE, mi.START_TIME AS MI_START_TIME, mi.END_TIME AS MI_END_TIME,
         mi.CHECK_IN_LOCATION AS MI_CHECK_IN_LOCATION, mi.CHECK_IN_RANGE AS MI_CHECK_IN_RANGE, mi.IS_NEED_REGISTER AS MI_IS_NEED_REGISTER,
         mi.ORGANIZER AS MI_ORGANIZER, mi.CHECK_IN_RULE AS MI_CHECK_IN_RULE, mi.REMARK AS MI_REMARK, mi.THEME_IMAGE_URL AS MI_THEME_IMAGE_URL,
-        mi.CREATE_TIME AS MI_CREATE_TIME,
+        mi.CREATE_TIME AS MI_CREATE_TIME, mi.IS_EFFECTIVE AS MI_IS_EFFECTIVE, mi.UPDATE_TIME AS MI_UPDATE_TIME,
         ui.ID AS UI_ID, ui.MEETING_ID AS UI_MEETING_ID, ui.USERNAME AS UI_USERNAME, ui.SEX AS UI_SEX, ui.AGE AS UI_AGE,
         ui.PHONE_NO AS UI_PHONE_NO, ui.ARRIVE_TIME AS UI_ARRIVE_TIME, ui.LEAVE_TIME AS UI_LEAVE_TIME, ui.COMPANY_NAME AS UI_COMPANY_NAME,
         ui.COMPANY_ADDRESS AS UI_COMPANY_ADDRESS, ui.TRANSPORT AS UI_TRANSPORT,
         ui.ROOM_NO AS UI_ROOM_NO, ui.CREATE_TIME AS UI_CREATE_TIME, ui.UPDATE_TIME AS UI_UPDATE_TIME, ui.IS_CHECK_IN AS UI_IS_CHECK_IN
     </sql>
 
-    <select id="selectByPageWithCheckIn" resultMap="MEETING_USER_MAP" parameterType="java.lang.Long">
+    <select id="selectByPageWithCheckIn" resultMap="MEETING_USER_MAP" parameterType="com.peanut.fs.dao.command.MeetingInfoCommand">
         SELECT
         <include refid="Meeting_User_Column_List"/>
         FROM
@@ -84,18 +88,81 @@
         WHERE ID = #{id, jdbcType=BIGINT}
     </select>
 
+    <select id="selectEffectiveMeeting" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM MEETING_INFO
+        WHERE is_effective = #{isEffective, jdbcType=VARCHAR}
+    </select>
+
     <insert id="insert" parameterType="com.peanut.fs.dao.model.meeting.MeetingInfoModel" useGeneratedKeys="true"
             keyProperty="id" keyColumn="ID">
-        insert into MEETING_INFO (ID, MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, IS_NEED_REGISTER, ORGANIZER,
-                                    CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME)
-        values (#{id,jdbcType=BIGINT}, #{meetingTitle,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+        insert into MEETING_INFO (MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, IS_NEED_REGISTER, ORGANIZER,
+                                    CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME, IS_EFFECTIVE, UPDATE_TIME)
+        values ( #{meetingTitle,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
         #{checkInLocation, jdbcType=VARCHAR}, #{checkInRange, jdbcType=VARCHAR}, #{isNeedRegister, jdbcType=VARCHAR},
         #{organizer, jdbcType=VARCHAR}, #{checkInRule, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR},
-        #{themeImageUrl, jdbcType=VARCHAR}, #{createTime, jdbcType=TIMESTAMP})
+        #{themeImageUrl, jdbcType=VARCHAR}, #{createTime, jdbcType=TIMESTAMP},  #{isEffective, jdbcType=VARCHAR}, #{updateTime, jdbcType=TIMESTAMP})
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID();
         </selectKey>
     </insert>
+
+    <update id="update" parameterType="com.peanut.fs.dao.model.meeting.MeetingInfoModel">
+        UPDATE MEETING_INFO
+        <set>
+            <if test="meetingTitle != null" >
+                MEETING_TITLE = #{meetingTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null" >
+                START_TIME = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                END_TIME = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="checkInLocation != null" >
+                CHECK_IN_LOCATION = #{checkInLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="checkInRange != null" >
+                CHECK_IN_RANGE = #{checkInRange,jdbcType=VARCHAR},
+            </if>
+            <if test="isNeedRegister != null" >
+                IS_NEED_REGISTER = #{isNeedRegister,jdbcType=VARCHAR},
+            </if>
+            <if test="organizer != null" >
+                ORGANIZER = #{organizer,jdbcType=VARCHAR},
+            </if>
+            <if test="checkInRule != null" >
+                CHECK_IN_RULE = #{checkInRule,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="themeImageUrl != null" >
+                THEME_IMAGE_URL = #{themeImageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="isEffective != null" >
+                IS_EFFECTIVE = #{isEffective,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null" >
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateEffectiveStatus" parameterType="com.peanut.fs.dao.model.meeting.MeetingInfoModel">
+        UPDATE MEETING_INFO
+        <set>
+            <if test="isEffective != null" >
+                IS_EFFECTIVE = #{isEffective,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null" >
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
 
     <delete id="delete" parameterType="java.lang.Long">
         DELETE FROM MEETING_INFO WHERE ID = #{id,jdbcType=BIGINT}

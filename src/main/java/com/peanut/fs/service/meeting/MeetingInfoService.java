@@ -17,7 +17,12 @@ public interface MeetingInfoService {
      * 分页查询会议列表
      * @return
      */
-    PageInfo<MeetingInfoModel> selectByPageWithCheckIn(MeetingInfoCommand meetingInfoCommand);
+    PageInfo<MeetingInfoDto> selectByPageWithCheckIn(MeetingInfoCommand meetingInfoCommand);
+
+    /**
+     * 根据id查询
+     */
+    MeetingInfoModel selectById(long id);
 
     /**
      * 新增
@@ -32,5 +37,25 @@ public interface MeetingInfoService {
      * @return
      */
     CommonResult delete(long id);
+
+    /**
+     * 更新会议信息
+     * @param meetingInfoDto
+     * @return
+     */
+    CommonResult update(MeetingInfoDto meetingInfoDto);
+
+    /**
+     * 查询生效会议
+     * @return
+     */
+    MeetingInfoDto selectEffectiveMeeting();
+
+    /**
+     * 更新生效状态
+     * @param id
+     * @return
+     */
+    CommonResult updateEffectiveStatus(long id, String isEffective);
 
 }

@@ -24,6 +24,13 @@
         ROOM_NO, CREATE_TIME, UPDATE_TIME, IS_CHECK_IN
     </sql>
 
+    <select id="selectByPage" resultMap="BaseResultMap" parameterType="com.peanut.fs.dao.command.UserInfoCommand">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM USER_INFO
+        WHERE MEETING_ID = #{meetingId, jdbcType=BIGINT}
+    </select>
+
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
         SELECT
         <include refid="Base_Column_List"/>
@@ -37,6 +44,77 @@
         FROM USER_INFO
         WHERE MEETING_ID = #{meetingId,jdbcType=BIGINT}
     </select>
+
+    <select id="selectByPhoneNoAndMeetingIdExId" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM USER_INFO
+        WHERE meeting_id = #{meetingid, jdbcType=BIGINT}
+        AND phone_no = #{phoneNo, jdbcType=VARCHAR}
+        AND id != #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByPhoneNoAndMeetingId" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM USER_INFO
+        WHERE meeting_id = #{meetingid, jdbcType=BIGINT}
+        AND phone_no = #{phoneNo, jdbcType=VARCHAR}
+    </select>
+
+    <update id="update" parameterType="com.peanut.fs.dao.model.user.UserInfoModel">
+        UPDATE USER_INFO
+        <set>
+            <if test="username != null" >
+                USERNAME = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null" >
+                SEX = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null" >
+                AGE = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="phoneNo != null" >
+                PHONE_NO = #{phoneNo,jdbcType=VARCHAR},
+            </if>
+            <if test="arriveTime != null" >
+                ARRIVE_TIME = #{arriveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="leaveTime != null" >
+                LEAVE_TIME = #{leaveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="companyName != null" >
+                COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="companyAddress != null" >
+                COMPANY_ADDRESS = #{companyAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="transport != null" >
+                TRANSPORT = #{transport,jdbcType=VARCHAR},
+            </if>
+            <if test="roomNo != null" >
+                ROOM_NO = #{roomNo,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null" >
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isCheckIn != null" >
+                IS_CHECK_IN = #{isCheckIn,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateCheckInStatus" parameterType="com.peanut.fs.dao.model.user.UserInfoModel">
+        UPDATE USER_INFO
+        <set>
+            <if test="isCheckIn != null" >
+                IS_CHECK_IN = #{isCheckIn,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where PHONE_NO = #{phoneNo,jdbcType=VARCHAR}
+        AND MEETING_ID = #{meetingId, BIGINT}
+    </update>
 
     <insert id="insert" parameterType="com.peanut.fs.dao.model.user.UserInfoModel" useGeneratedKeys="true"
             keyProperty="id" keyColumn="ID">
@@ -54,6 +132,10 @@
 
     <delete id="delete" parameterType="java.lang.Long">
         DELETE FROM USER_INFO WHERE ID = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByMeetingId" parameterType="java.lang.Long">
+         DELETE FROM USER_INFO WHERE meeting_id = #{meetingId,jdbcType=BIGINT}
     </delete>
 
 </mapper>

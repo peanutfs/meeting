@@ -79,6 +79,16 @@ public class MeetingInfoModel {
     private Date createTime;
 
     /**
+     * 是否生效
+     */
+    private String isEffective;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+    /**
      * 关联用户列表
      */
     private List<UserInfoModel> userInfoModelList;

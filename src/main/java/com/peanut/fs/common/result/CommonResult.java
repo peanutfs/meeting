@@ -31,6 +31,10 @@ public class CommonResult<T> implements Serializable {
 		this.success = successCode;
 	}
 
+	public CommonResult(Integer code) {
+		this.success = code;
+	}
+
 
 	public CommonResult(Integer success, String message) {
 		this.success = success;

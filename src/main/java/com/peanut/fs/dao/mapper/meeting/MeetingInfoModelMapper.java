@@ -38,4 +38,25 @@ public interface MeetingInfoModelMapper {
      * @return
      */
     int delete(long id);
+
+    /**
+     * 更新
+     * @param meetingInfoModel
+     * @return
+     */
+    int update(MeetingInfoModel meetingInfoModel);
+
+    /**
+     * 查询生效会议
+     * @param isEffective
+     * @return
+     */
+    MeetingInfoModel selectEffectiveMeeting(String isEffective);
+
+    /**
+     * 更新生效状态
+     * @param meetingInfoModel
+     * @return
+     */
+    int updateEffectiveStatus(MeetingInfoModel meetingInfoModel);
 }

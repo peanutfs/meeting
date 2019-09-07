@@ -76,4 +76,14 @@ public class MeetingInfoDto {
      * 创建时间
      */
     private String createTime;
+
+    /**
+     * 签到统计
+     */
+    private int checkInCount;
+
+    /**
+     * 是否生效
+     */
+    private String isEffective;
 }
