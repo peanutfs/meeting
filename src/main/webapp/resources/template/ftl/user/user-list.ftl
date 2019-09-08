@@ -64,8 +64,9 @@
             , title: '版本更新信息表'
             , cellMinWidth:50
             , cols: [[
-                {field: 'meetingId',title: 'meeting', width:90, sort: true, hide: true}
-                ,{field: 'id', title: '序号', width:80, sort: true}
+                {title: '序号', width:90, sort: true, type: 'numbers'}
+                ,{field: 'meetingId',title: 'meeting', width:90, sort: true, hide: true}
+                ,{field: 'id', title: 'id', width:80, sort: true, hide:true}
                 , {field: 'username', title: '姓名', width:100 }
                 , {field: 'sex', title: '性别',width:60, templet:'#sexTel'}
                 , {field: 'age', title: '年龄',width:60}

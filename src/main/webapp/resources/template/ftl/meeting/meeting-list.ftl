@@ -52,7 +52,8 @@
             , title: '版本更新信息表'
             , cellMinWidth:50
             , cols: [[
-                {field: 'id', title: '序号', width:90, sort: true }
+                {title: '序号', width:90, sort: true, type: 'numbers'}
+                ,{field: 'id', title: '序号', width:90, sort: true, hide:true }
                 , {field: 'meetingTitle', title: '会议标题'}
                 , {field: 'startTime', title: '开始时间',width:120}
                 , {field: 'endTime', title: '结束时间',width:120}
