@@ -49,6 +49,16 @@ public class MeetingInfoModel {
     private int checkInRange;
 
     /**
+     * 签到地点经度
+     */
+    private String locationLongitude;
+
+    /**
+     * 签到地点纬度
+     */
+    private String locationLatitude;
+
+    /**
      * 是否需要填写个人信息
      */
     private String isNeedRegister;

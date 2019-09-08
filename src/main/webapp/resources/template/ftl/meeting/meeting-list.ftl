@@ -172,7 +172,7 @@
                 maxmin: true,
                 area: ['800px', '550px'],
                 shadeClose: false, //点击遮罩关闭
-                content: 'addMeetingForm'
+                content: '${base}/meeting/addMeetingForm'
             });
         });
 

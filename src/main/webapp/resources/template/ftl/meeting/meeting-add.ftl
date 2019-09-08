@@ -45,7 +45,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">签到地点</label>
             <div class="layui-input-inline">
-                <input type="text" name="checkInLocation" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入签到地点">
+                <input type="text" name="checkInLocation" id='tipinput' lay-verify="required"  class="layui-input" placeholder="请输入签到地点">
             </div>
         </div>
         <div class="layui-inline">
@@ -78,12 +78,12 @@
             <textarea placeholder="请输入备注" class="layui-textarea" name="remark" required lay-verify="required"></textarea>
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">是否需要填写个人信息</label>
-        <div class="layui-input-block">
-            <input type="checkbox" name="isNeedRegister" lay-skin="switch" lay-text="是|否" lay-filter="isNeedRegisterFilter">
-        </div>
-    </div>
+    <#--<div class="layui-form-item">-->
+        <#--<label class="layui-form-label">是否需要填写个人信息</label>-->
+        <#--<div class="layui-input-block">-->
+            <#--<input type="checkbox" name="isNeedRegister" lay-skin="switch" lay-text="是|否" lay-filter="isNeedRegisterFilter">-->
+        <#--</div>-->
+    <#--</div>-->
     <div class="layui-form-item"  style="margin-left: 150px">
         <div class="layui-input-block">
             <button class="layui-btn layui-btn-submit" lay-submit="" lay-filter="submitForm">立即提交</button>
@@ -91,6 +91,17 @@
         </div>
     </div>
 </form>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=30d103007a4d021f643ae2fd6732df85&plugin=AMap.Autocomplete"></script>
+<script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+<script type="text/javascript">
+    var map = new AMap.Map("container", {
+        resizeEnable: true
+    });
+    //输入提示
+    var auto = new AMap.Autocomplete({
+        input: "tipinput"
+    });
+</script>
 <script>
     layui.use(['form','layer','jquery', 'upload', 'laydate'], function(){
         var form = layui.form

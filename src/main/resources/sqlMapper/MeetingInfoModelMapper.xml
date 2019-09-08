@@ -8,6 +8,8 @@
         <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
         <result column="CHECK_IN_LOCATION" property="checkInLocation" jdbcType="VARCHAR" />
         <result column="CHECK_IN_RANGE" property="checkInRange" jdbcType="VARCHAR" />
+        <result column="LOCATION_LONGITUDE" property="locationLongitude" jdbcType="VARCHAR" />
+        <result column="LOCATION_LATITUDE" property="locationLatitude" jdbcType="VARCHAR" />
         <result column="IS_NEED_REGISTER" property="isNeedRegister" jdbcType="VARCHAR" />
         <result column="ORGANIZER" property="organizer" jdbcType="VARCHAR" />
         <result column="CHECK_IN_RULE" property="checkInRule" jdbcType="VARCHAR" />
@@ -25,6 +27,8 @@
         <result column="MI_END_TIME" property="endTime" jdbcType="TIMESTAMP" />
         <result column="MI_CHECK_IN_LOCATION" property="checkInLocation" jdbcType="VARCHAR" />
         <result column="MI_CHECK_IN_RANGE" property="checkInRange" jdbcType="VARCHAR" />
+        <result column="MI_LOCATION_LONGITUDE" property="locationLongitude" jdbcType="VARCHAR" />
+        <result column="MI_LOCATION_LATITUDE" property="locationLatitude" jdbcType="VARCHAR" />
         <result column="MI_IS_NEED_REGISTER" property="isNeedRegister" jdbcType="VARCHAR" />
         <result column="MI_ORGANIZER" property="organizer" jdbcType="VARCHAR" />
         <result column="MI_CHECK_IN_RULE" property="checkInRule" jdbcType="VARCHAR" />
@@ -53,13 +57,16 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        ID, MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, IS_NEED_REGISTER, ORGANIZER, 
+        ID, MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, LOCATION_LONGITUDE,
+        LOCATION_LATITUDE, IS_NEED_REGISTER, ORGANIZER,
         CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME, IS_EFFECTIVE, UPDATE_TIME
     </sql>
 
     <sql id="Meeting_User_Column_List" >
         mi.ID AS MI_ID, mi.MEETING_TITLE AS MI_MEETING_TITLE, mi.START_TIME AS MI_START_TIME, mi.END_TIME AS MI_END_TIME,
-        mi.CHECK_IN_LOCATION AS MI_CHECK_IN_LOCATION, mi.CHECK_IN_RANGE AS MI_CHECK_IN_RANGE, mi.IS_NEED_REGISTER AS MI_IS_NEED_REGISTER,
+        mi.CHECK_IN_LOCATION AS MI_CHECK_IN_LOCATION, mi.CHECK_IN_RANGE AS MI_CHECK_IN_RANGE,
+        mi.LOCATION_LONGITUDE AS MI_LOCATION_LONGITUDE, mi.LOCATION_LATITUDE AS MI_LOCATION_LATITUDE,
+        mi.IS_NEED_REGISTER AS MI_IS_NEED_REGISTER,
         mi.ORGANIZER AS MI_ORGANIZER, mi.CHECK_IN_RULE AS MI_CHECK_IN_RULE, mi.REMARK AS MI_REMARK, mi.THEME_IMAGE_URL AS MI_THEME_IMAGE_URL,
         mi.CREATE_TIME AS MI_CREATE_TIME, mi.IS_EFFECTIVE AS MI_IS_EFFECTIVE, mi.UPDATE_TIME AS MI_UPDATE_TIME,
         ui.ID AS UI_ID, ui.MEETING_ID AS UI_MEETING_ID, ui.USERNAME AS UI_USERNAME, ui.SEX AS UI_SEX, ui.AGE AS UI_AGE,
@@ -97,12 +104,15 @@
 
     <insert id="insert" parameterType="com.peanut.fs.dao.model.meeting.MeetingInfoModel" useGeneratedKeys="true"
             keyProperty="id" keyColumn="ID">
-        insert into MEETING_INFO (MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, IS_NEED_REGISTER, ORGANIZER,
-                                    CHECK_IN_RULE, REMARK, THEME_IMAGE_URL, CREATE_TIME, IS_EFFECTIVE, UPDATE_TIME)
+        insert into MEETING_INFO (MEETING_TITLE, START_TIME, END_TIME, CHECK_IN_LOCATION, CHECK_IN_RANGE, LOCATION_LONGITUDE,
+                                  LOCATION_LATITUDE, IS_NEED_REGISTER, ORGANIZER, CHECK_IN_RULE, REMARK, THEME_IMAGE_URL,
+                                  CREATE_TIME, IS_EFFECTIVE, UPDATE_TIME)
         values ( #{meetingTitle,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
-        #{checkInLocation, jdbcType=VARCHAR}, #{checkInRange, jdbcType=VARCHAR}, #{isNeedRegister, jdbcType=VARCHAR},
+        #{checkInLocation, jdbcType=VARCHAR}, #{checkInRange, jdbcType=VARCHAR}, #{locationLongitude, jdbcType=VARCHAR},
+        #{locationLatitude, jdbcType=VARCHAR}, #{isNeedRegister, jdbcType=VARCHAR},
         #{organizer, jdbcType=VARCHAR}, #{checkInRule, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR},
-        #{themeImageUrl, jdbcType=VARCHAR}, #{createTime, jdbcType=TIMESTAMP},  #{isEffective, jdbcType=VARCHAR}, #{updateTime, jdbcType=TIMESTAMP})
+        #{themeImageUrl, jdbcType=VARCHAR}, #{createTime, jdbcType=TIMESTAMP},  #{isEffective, jdbcType=VARCHAR},
+        #{updateTime, jdbcType=TIMESTAMP})
         <selectKey keyProperty="id" resultType="long" order="AFTER">
             SELECT LAST_INSERT_ID();
         </selectKey>
@@ -125,6 +135,12 @@
             </if>
             <if test="checkInRange != null" >
                 CHECK_IN_RANGE = #{checkInRange,jdbcType=VARCHAR},
+            </if>
+            <if test="locationLongitude != null" >
+                LOCATION_LONGITUDE = #{locationLongitude,jdbcType=VARCHAR},
+            </if>
+            <if test="locationLatitude != null" >
+                LOCATION_LATITUDE = #{locationLatitude,jdbcType=VARCHAR},
             </if>
             <if test="isNeedRegister != null" >
                 IS_NEED_REGISTER = #{isNeedRegister,jdbcType=VARCHAR},

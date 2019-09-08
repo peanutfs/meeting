@@ -8,6 +8,7 @@ import com.peanut.fs.common.enums.ResponseEnum;
 import com.peanut.fs.common.exceptions.QueryEffectiveMeetingException;
 import com.peanut.fs.common.result.CommonResult;
 import com.peanut.fs.common.util.DateUtils;
+import com.peanut.fs.common.util.GMapUtil;
 import com.peanut.fs.common.util.ValidateUtil;
 import com.peanut.fs.dao.command.MeetingInfoCommand;
 import com.peanut.fs.dao.mapper.meeting.MeetingInfoModelMapper;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -67,18 +69,20 @@ public class MeetingInfoServiceImpl implements MeetingInfoService {
     private MeetingInfoDto buildMeetingInfoDto(MeetingInfoModel meetingInfoModel) {
         MeetingInfoDto meetingInfoDto = new MeetingInfoDto();
         meetingInfoDto.setCheckInLocation(meetingInfoModel.getCheckInLocation());
-        meetingInfoDto.setStartTime(DateUtils.formatDate(meetingInfoModel.getStartTime()));
+        meetingInfoDto.setStartTime(DateUtils.formatDateTime(meetingInfoModel.getStartTime()));
         meetingInfoDto.setRemark(meetingInfoModel.getRemark());
         meetingInfoDto.setOrganizer(meetingInfoModel.getOrganizer());
         meetingInfoDto.setMeetingTitle(meetingInfoModel.getMeetingTitle());
         meetingInfoDto.setIsNeedRegister(meetingInfoModel.getIsNeedRegister());
         meetingInfoDto.setId(meetingInfoModel.getId());
-        meetingInfoDto.setEndTime(DateUtils.formatDate(meetingInfoModel.getEndTime()));
+        meetingInfoDto.setEndTime(DateUtils.formatDateTime(meetingInfoModel.getEndTime()));
         meetingInfoDto.setCreateTime(DateUtils.formatDateTime(meetingInfoModel.getCreateTime()));
         meetingInfoDto.setCheckInRule(meetingInfoModel.getCheckInRule());
         meetingInfoDto.setCheckInRange(meetingInfoModel.getCheckInRange());
         meetingInfoDto.setCheckInCount(CollectionUtils.isNotEmpty(meetingInfoModel.getUserInfoModelList()) ? meetingInfoModel.getUserInfoModelList().size() : 0);
         meetingInfoDto.setIsEffective(meetingInfoModel.getIsEffective());
+        meetingInfoDto.setLocationLongitude(meetingInfoModel.getLocationLongitude());
+        meetingInfoDto.setLocationLatitude(meetingInfoModel.getLocationLatitude());
         return meetingInfoDto;
     }
 
@@ -87,11 +91,17 @@ public class MeetingInfoServiceImpl implements MeetingInfoService {
     public CommonResult insert(MeetingInfoDto meetingInfoDto) {
         log.info("[MeetingInfoServiceImpl.insert]新增会议开始meetingInfoDto:{}", meetingInfoDto);
         CommonResult commonResult = new CommonResult();
-        if(!ValidateUtil.isOperationSuccess(meetingInfoModelMapper.insert(buildMeetingInfoModel(meetingInfoDto)))){
+        if(!ValidateUtil.isOperationSuccess(meetingInfoModelMapper.insert(buildMeetingInfoModelForInsert(meetingInfoDto)))){
             commonResult.setSuccess(CommonResult.failureCode);
             log.error("[MeetingInfoServiceImpl.insert]新增会议失败");
         }
         return commonResult;
+    }
+
+    private MeetingInfoModel buildMeetingInfoModelForInsert(MeetingInfoDto meetingInfoDto) {
+        MeetingInfoModel meetingInfoModel = buildMeetingInfoModel(meetingInfoDto);
+        meetingInfoModel.setIsEffective(MeetingEffectiveStatusEnum.NOT_EFFECTIVE.getCode());
+        return meetingInfoModel;
     }
 
     private MeetingInfoModel buildMeetingInfoModel(MeetingInfoDto meetingInfoDto) {
@@ -108,8 +118,23 @@ public class MeetingInfoServiceImpl implements MeetingInfoService {
         meetingInfoModel.setUpdateTime(new Date());
         meetingInfoModel.setCheckInRule(meetingInfoDto.getCheckInRule());
         meetingInfoModel.setCheckInRange(meetingInfoDto.getCheckInRange());
-        meetingInfoModel.setIsEffective(MeetingEffectiveStatusEnum.NOT_EFFECTIVE.getCode());
+        setLocationLonAndLat(meetingInfoModel, meetingInfoDto.getCheckInLocation());
         return meetingInfoModel;
+    }
+
+    private void setLocationLonAndLat(MeetingInfoModel meetingInfoModel, String checkInLocation) {
+        if(StringUtils.isNotEmpty(checkInLocation)){
+            log.info("[MeetingInfoServiceImpl.setLocationLonAndLat]获取位置经纬度开始checkInLocation:{}", checkInLocation);
+            String longitudeAndLatitudeValue = GMapUtil.getLatitudeAndLongitudeByName(checkInLocation);
+            if(StringUtils.isNotEmpty(longitudeAndLatitudeValue)){
+                int listSize = 1;
+                List<String> stringList = Arrays.asList(longitudeAndLatitudeValue.split(","));
+                if(CollectionUtils.isNotEmpty(stringList) && stringList.size() > listSize){
+                    meetingInfoModel.setLocationLongitude(stringList.get(0));
+                    meetingInfoModel.setLocationLatitude(stringList.get(1));
+                }
+            }
+        }
     }
 
     @Override

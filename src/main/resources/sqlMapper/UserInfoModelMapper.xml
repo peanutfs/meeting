@@ -58,7 +58,7 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM USER_INFO
-        WHERE meeting_id = #{meetingid, jdbcType=BIGINT}
+        WHERE meeting_id = #{meetingId, jdbcType=BIGINT}
         AND phone_no = #{phoneNo, jdbcType=VARCHAR}
     </select>
 
@@ -113,7 +113,7 @@
             </if>
         </set>
         where PHONE_NO = #{phoneNo,jdbcType=VARCHAR}
-        AND MEETING_ID = #{meetingId, BIGINT}
+        AND MEETING_ID = #{meetingId, jdbcType=BIGINT}
     </update>
 
     <insert id="insert" parameterType="com.peanut.fs.dao.model.user.UserInfoModel" useGeneratedKeys="true"

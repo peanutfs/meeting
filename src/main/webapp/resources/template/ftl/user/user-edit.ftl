@@ -10,7 +10,7 @@
 </head>
 <body>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>添加用户</legend>
+    <legend>编辑用户</legend>
 </fieldset>
 <form class="layui-form" action="" style="margin-top:20px" method="post">
     <input type="hidden" name="id" value="${userInfo.id}"/>
@@ -94,7 +94,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">住宿房号</label>
         <div class="layui-input-inline">
-            <input type="text" name="roomNo" lay-verify="required" autocomplete="off" class="layui-input" value="${userInfo.roomNo}">
+            <input type="text" name="roomNo" lay-verify="required" autocomplete="off" class="layui-input" value="${userInfo.roomNo!""}">
         </div>
     </div>
     <div class="layui-form-item" style="margin-left: 150px">

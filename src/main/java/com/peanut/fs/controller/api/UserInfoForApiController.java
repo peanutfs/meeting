@@ -28,20 +28,21 @@ public class UserInfoForApiController {
     @ResponseBody
     public ApiCommonResult addUser(UserInfoDto userInfoDto){
         log.info("[UserInfoForApiController.addUser]新增用户信息开始userInfoDto:{}", userInfoDto);
-        return CommonResultTemplate.execute(()-> userInfoService.insert(userInfoDto));
+        return CommonResultTemplate.execute(()-> userInfoService.addUserForApi(userInfoDto));
     }
 
     @PostMapping(value = "/checkIn")
     @ResponseBody
-    public ApiCommonResult checkIn(long meetingId, String phoneNo){
-        log.info("[UserInfoForApiController.checkIn]更新用户签到状态开始meetingId:{}, phoneNo:{}", meetingId, phoneNo);
-        return CommonResultTemplate.execute(()-> userInfoService.updateCheckInStatus(meetingId, phoneNo));
+    public ApiCommonResult checkIn(long meetingId, String phoneNo, String longitude, String latitude){
+        log.info("[UserInfoForApiController.checkIn]更新用户签到状态开始meetingId:{}, phoneNo:{}, longitude:{}, latitude:{}", meetingId, phoneNo, longitude, latitude);
+        return CommonResultTemplate.execute(()-> userInfoService.updateCheckInStatus(meetingId, phoneNo, longitude, latitude));
     }
 
     @PostMapping(value = "/isUserExist")
     @ResponseBody
-    public ApiCommonResult isUserExist(long meetingId, String phoneNo){
-        log.info("[UserInfoForApiController.checkIn]判断用户信息是否存在开始meetingId:{}, phoneNo:{}", meetingId, phoneNo);
-        return CommonResultTemplate.execute(()-> userInfoService.updateCheckInStatus(meetingId, phoneNo));
+    public ApiCommonResult isUserExist(long meetingId, String code, String encryptData, String iv){
+        log.info("[UserInfoForApiController.isUserExist]判断用户信息是否存在开始meetingId:{}，code:{}，encryptData:{}, iv:{}", meetingId, code, encryptData, iv);
+        return CommonResultTemplate.execute(()-> userInfoService.checkUserExist(meetingId, code, encryptData, iv));
     }
+
 }

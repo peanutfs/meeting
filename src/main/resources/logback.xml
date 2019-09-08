@@ -6,8 +6,8 @@
 <configuration debug="false">
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径 -->
     <contextName>test</contextName>
-    <Property name="log.base" value="E:/logs" scope="context"/>
-    <Property name="log.name" value="test" scope="context"/>
+    <Property name="log.path" value="/Users/xujingjing/Documents/zfs" scope="context"/>
+    <Property name="log.name" value="meeting" scope="context"/>
 
     <!-- 控制台输出日志 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -107,7 +107,7 @@
     <logger name="org.springframework.web.servlet.view.JstlView" level="DEBUG"/>
     <logger name="httpclient.wire.content" level="WARN"/>
     <logger name="org.springframework.web.util.NestedServletException" level="FATAL"/>
-    <logger name="com.mchange.v2" level="INFO"/>
+    <logger name="com.peanut.fs" level="INFO"/>
 
 
     <!--JdbcTemplate的日志输出器 -->

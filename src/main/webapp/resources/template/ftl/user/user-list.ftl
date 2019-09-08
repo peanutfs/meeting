@@ -41,10 +41,10 @@
 </script>
 
 <script type="text/html" id="isCheckInTel">
-    {{#  if(d.isCheckIn === '0'){ }}
-    未签到
-    {{#  } else { }}
+    {{#  if(d.isCheckIn === '1'){ }}
     已签到
+    {{#  } else { }}
+    未签到
     {{#  } }}
 </script>
 
@@ -77,7 +77,7 @@
                 , {field: 'transport', title: '交通方式', width: 100}
                 , {field: 'roomNo', title: '住宿房号', width: 100}
                 , {field: 'isCheckIn', title: '是否签到', width: 100 ,templet:'#isCheckInTel'}
-                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#barOption'}
+                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#barOption', width:165}
             ]]
             , id: 'userInfo'
             , url: '${base}/user/userInfo?meetingId=' + meetingId

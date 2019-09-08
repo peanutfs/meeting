@@ -50,5 +50,9 @@ public class CommonResult<T> implements Serializable {
 		this.success = success;
 		this.dataList = dataList;
 	}
-	
+
+	public boolean isSuccess(){
+		return successCode.equals(this.success);
+	}
+
 }

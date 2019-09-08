@@ -28,7 +28,17 @@ public enum ResponseEnum {
     /**
      * 查询有效会议失败
      */
-    QUERY_EFFECTIVE_MEETING_ERROR("S101", "查询有效会议失败");
+    QUERY_EFFECTIVE_MEETING_ERROR("S101", "查询有效会议失败"),
+
+    /**
+     * 超出签到范围
+     */
+    OUT_RANGE_LIMIT("E100", "超出签到范围"),
+
+    /**
+     * 超出签到范围
+     */
+    INSERT_USER_ERROR("I001", "新增用户异常");
 
 
     private String code;

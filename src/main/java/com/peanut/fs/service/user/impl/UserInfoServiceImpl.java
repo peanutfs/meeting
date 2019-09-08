@@ -5,13 +5,19 @@ import com.github.pagehelper.PageInfo;
 import com.peanut.fs.common.constants.BizConstants;
 import com.peanut.fs.common.enums.ResponseEnum;
 import com.peanut.fs.common.enums.UserCheckInStatusEnum;
+import com.peanut.fs.common.exceptions.InsertUserException;
+import com.peanut.fs.common.exceptions.QueryMeetingInfoException;
 import com.peanut.fs.common.exceptions.UpdateCheckInStatusException;
 import com.peanut.fs.common.result.CommonResult;
 import com.peanut.fs.common.util.DateUtils;
+import com.peanut.fs.common.util.GMapUtil;
 import com.peanut.fs.common.util.ValidateUtil;
+import com.peanut.fs.common.util.wechat.WechatUtil;
 import com.peanut.fs.dao.command.UserInfoCommand;
 import com.peanut.fs.dao.mapper.user.UserInfoModelMapper;
+import com.peanut.fs.dao.model.meeting.MeetingInfoModel;
 import com.peanut.fs.dao.model.user.UserInfoModel;
+import com.peanut.fs.service.meeting.MeetingInfoService;
 import com.peanut.fs.service.user.UserInfoService;
 import com.peanut.fs.service.user.dto.UserInfoDto;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +39,9 @@ public class UserInfoServiceImpl implements UserInfoService{
 
     @Autowired(required = false)
     private UserInfoModelMapper userInfoModelMapper;
+
+    @Autowired
+    private MeetingInfoService meetingInfoService;
 
     @Override
     public PageInfo<UserInfoDto> selectUserInfoByPage(UserInfoCommand userInfoCommand) {
@@ -118,6 +127,7 @@ public class UserInfoServiceImpl implements UserInfoService{
     public CommonResult insert(UserInfoDto userInfoDto) {
         log.info("[UserInfoServiceImpl.insert]新增用户信息开始userInfoDto:{}", userInfoDto);
         CommonResult commonResult = new CommonResult();
+        userInfoDto.setIsCheckIn(UserCheckInStatusEnum.NOT_CHECK_IN.getCode());
         if(null != userInfoModelMapper.selectByPhoneNoAndMeetingId(buildQueryMap(userInfoDto.getMeetingId(), userInfoDto.getPhoneNo()))){
             log.error("[UserInfoServiceImpl.insert]已存在相同手机号用户");
             commonResult.setSuccess(CommonResult.failureCode);
@@ -197,8 +207,17 @@ public class UserInfoServiceImpl implements UserInfoService{
     }
 
     @Override
-    public int updateCheckInStatus(long meetingId, String phoneNo) {
-        log.info("[UserInfoServiceImpl.updateCheckInStatus]更新签到状态开始meetingId:{}, phoneNo:{}", meetingId, phoneNo);
+    public int updateCheckInStatus(long meetingId, String phoneNo, String longitude, String latitude) {
+        log.info("[UserInfoServiceImpl.updateCheckInStatus]更新签到状态开始meetingId:{}, phoneNo:{}, longitude:{}, latitude:{}", meetingId, phoneNo, longitude, latitude);
+        MeetingInfoModel meetingInfoModel = meetingInfoService.selectById(meetingId);
+        if(null == meetingInfoModel){
+            throw new QueryMeetingInfoException(ResponseEnum.QUERY_EFFECTIVE_MEETING_ERROR.getCode(), ResponseEnum.QUERY_EFFECTIVE_MEETING_ERROR.getMsg());
+        }
+        if(GMapUtil.getDistance(appendLonAndLat(longitude, latitude), appendLonAndLat(meetingInfoModel.getLocationLongitude(), meetingInfoModel.getLocationLatitude()))
+                > meetingInfoModel.getCheckInRange()){
+            log.error("[UserInfoServiceImpl.updateCheckInStatus]不在签到范围内");
+            throw new UpdateCheckInStatusException(ResponseEnum.OUT_RANGE_LIMIT.getCode(), ResponseEnum.OUT_RANGE_LIMIT.getMsg());
+        }
         UserInfoModel userInfoModel = new UserInfoModel();
         userInfoModel.setMeetingId(meetingId);
         userInfoModel.setPhoneNo(phoneNo);
@@ -210,16 +229,38 @@ public class UserInfoServiceImpl implements UserInfoService{
         return 1;
     }
 
+    private String appendLonAndLat(String longitude, String latitude) {
+        return longitude + "," + latitude;
+    }
+
     @Override
-    public Map<String, String> checkUserExist(long meetingId, String phoneNo) {
+    public Map<String, String> checkUserExist(long meetingId, String code, String encryptData, String iv) {
+        log.info("[UserInfoServiceImpl.checkUserExist]判断用户是否存在meetingId:{}", meetingId);
         Map<String, String> returnMap = new HashMap<>();
+        String phoneNo = WechatUtil.getPhone(encryptData, WechatUtil.getSessionKey(code), iv);
+        log.info("[UserInfoServiceImpl.checkUserExist]解密手机号结束phoneNo:{}", phoneNo);
         if(null != userInfoModelMapper.selectByPhoneNoAndMeetingId(buildQueryMap(meetingId, phoneNo))){
+            log.info("[UserInfoServiceImpl.checkUserExist]用户存在");
             returnMap.put("isUserExist", BizConstants.YES);
         }else {
             returnMap.put("isUserExist", BizConstants.NO);
         }
+        returnMap.put("phoneNo", phoneNo);
         return returnMap;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int addUserForApi(UserInfoDto userInfoDto) {
+        log.info("[UserInfoServiceImpl.addUserForApi]添加用户开始userInfoDto:{}", userInfoDto);
+        if(!this.insert(userInfoDto).isSuccess()){
+            log.error("[UserInfoServiceImpl.addUserForApi]添加用户失败");
+            throw new InsertUserException(ResponseEnum.INSERT_USER_ERROR.getCode(), ResponseEnum.INSERT_USER_ERROR.getMsg());
+        }
+        log.info("[UserInfoServiceImpl.addUserForApi]添加用户成功");
+        return 1;
+    }
+
 
     private UserInfoModel buildUserInfoModelForUpdate(UserInfoDto userInfoDto) {
         UserInfoModel userInfoModel = buildUserInfoModel(userInfoDto);

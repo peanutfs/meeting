@@ -71,13 +71,19 @@ public interface UserInfoService {
      * @param phoneNo
      * @return
      */
-    int updateCheckInStatus(long meetingId, String phoneNo);
+    int updateCheckInStatus(long meetingId, String phoneNo, String longitude, String latitude);
 
     /**
      * 判端用户是否存在
      * @param meetingId
-     * @param phoneNo
      * @return
      */
-    Map<String, String> checkUserExist(long meetingId, String phoneNo);
+    Map<String, String> checkUserExist(long meetingId, String code, String encryptData, String iv);
+
+    /**
+     * api添加用户
+     * @param userInfoDto
+     * @return
+     */
+    int addUserForApi(UserInfoDto userInfoDto);
 }
